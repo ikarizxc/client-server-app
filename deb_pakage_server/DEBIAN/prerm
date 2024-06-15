@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+# Остановка службы
+systemctl stop server.service
+
+# Отключение службы
+systemctl disable server.service
+
+# Удаление временных файлов (конфиги, логи)
+rm -rf /logs
+
+exit 0

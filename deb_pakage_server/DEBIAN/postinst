@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+# Проверка и установка curl, если он не установлен
+if ! dpkg -l | grep -q "^ii  curl"; then
+  echo "Package curl is not installed. Installing..."
+  sudo apt-get update
+  sudo apt-get install -y curl
+else
+  echo "Package curl is already installed."
+fi
+
+# Перезагрузка конфигурации systemd
+systemctl daemon-reload
+
+# Включение службы, чтобы она запускалась при старте системы
+systemctl enable server.service
+
+# Запуск службы
+systemctl start server.service
+
+mkdir logs
+
+exit 0

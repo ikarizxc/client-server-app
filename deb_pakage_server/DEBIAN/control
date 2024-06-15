@@ -1,0 +1,6 @@
+Package: server
+Version: 1.0
+Architecture: amd64
+Maintainer: ikarizxc
+Description: server
+Depends: systemd
