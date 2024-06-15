@@ -1,0 +1,49 @@
+name: Deploy App
+run-name: ${{ github.actor }} run CI
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.22.1
+
+      - name: Build client and server
+        run: |
+          go mod download
+          go build -o server ./cmd/server/
+          go build -o client ./cmd/client/
+
+      - name: Start unit tests
+        run: go test ./tests
+
+      - name: Create debpkgs
+        run: |
+          sh create_debpkg_server.sh
+          sh create_debpkg_client.sh
+
+      - name: Start server smoke tests
+        run: |
+          sh smoke_test_server.sh
+
+      - name: Start client smoke tests
+        run: |
+          sh smoke_test_client.sh
+
+      - name: Upload server artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: server
+          path: ./server.deb
+
+      - name: Upload client artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: client
+          path: ./client.deb
